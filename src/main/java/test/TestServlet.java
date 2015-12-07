@@ -16,15 +16,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @WebServlet(urlPatterns = "/TestServlet", loadOnStartup = 1)
 public class TestServlet extends HttpServlet
 {
+	private static final Logger logger = LoggerFactory.getLogger(TestServlet.class);
+	
+	
 	/**
 	 * 
 	 */
     private static final long serialVersionUID = 1L;
 
-    @Resource
+    @Resource(lookup="jdbc/DefaultDB")
     private javax.sql.DataSource ds;
     
     
@@ -45,12 +51,13 @@ public class TestServlet extends HttpServlet
 			{
 				DatabaseMetaData metaData = ds.getConnection().getMetaData();
 				writer.println(new DBInformation(metaData).toString());
+				
+				logger.info("DB metadata found: {}", new DBInformation(metaData).toString());
 			}
 			catch (Exception ex)
 			{
-				ex.printStackTrace(writer);
+				logger.error("An error occured:", ex);
 			}
-			
 		}
 	}
 	
